@@ -1,10 +1,10 @@
 [package]
 name = "colorize-rs"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["MOBSkuchen"]
 description = "Simple terminal text colorisation using ansi characters"
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/MOBSkuchen/colorize"
-repository = "https://github.com/MOBSkuchen/colorize"
+homepage = "https://github.com/MOBSkuchen/colorize-rs"
+repository = "https://github.com/MOBSkuchen/colorize-rs"
 edition = "2021"

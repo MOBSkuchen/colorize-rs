@@ -2,9 +2,11 @@ colorize-rs
 ========
 A fork of colorize https://github.com/jeremyletang/colorize
 
+``cargo add colorize-rs``
+
 __colorize-rs__ provide simple text colorization for terminal emulator, using ansi escape characters.
 
-__colorize-rs__ is really simple to use, see this short example !
+Look at this example:
 
 ```Rust
 extern crate colorize_rs;
