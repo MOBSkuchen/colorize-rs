@@ -118,7 +118,13 @@ mod tests {
     }
     #[test]
     fn final_test() {
-        println!("{}", "Super final test combo !".magenta().blink()
-            .b_yellowb().underlined());
+        println!(
+            "{}",
+            "Super final test combo !"
+                .magenta()
+                .blink()
+                .b_yellowb()
+                .underlined()
+        );
     }
 }

@@ -32,8 +32,8 @@
 #![crate_type = "dylib"]
 #![crate_type = "rlib"]
 
-use Color::*;
 use BgColor::*;
+use Color::*;
 use Style::*;
 
 use std::mem;
@@ -57,7 +57,7 @@ pub enum Color {
     BrightBlue = 94,
     BrightMagenta = 95,
     BrightCyan = 96,
-    BrightGrey = 97
+    BrightGrey = 97,
 }
 
 #[derive(Clone, Copy)]
@@ -78,7 +78,7 @@ pub enum BgColor {
     BrightBlueb = 104,
     BrightMagentab = 105,
     BrightCyanb = 106,
-    BrightGreyb = 107
+    BrightGreyb = 107,
 }
 
 #[derive(Clone, Copy)]
@@ -90,19 +90,25 @@ pub enum Style {
     Concealed = 8,
     Faint = 2,
     Italic = 3,
-    CrossedOut = 9
+    CrossedOut = 9,
 }
 
 impl internal::TermAttrib for Color {
-    fn to_int(&self) -> i32 { *self as i32 }
+    fn to_int(&self) -> i32 {
+        *self as i32
+    }
 }
 
 impl internal::TermAttrib for BgColor {
-    fn to_int(&self) -> i32 { *self as i32 }
+    fn to_int(&self) -> i32 {
+        *self as i32
+    }
 }
 
 impl internal::TermAttrib for Style {
-    fn to_int(&self) -> i32 { *self as i32 }
+    fn to_int(&self) -> i32 {
+        *self as i32
+    }
 }
 
 impl BgColor {
@@ -112,7 +118,7 @@ impl BgColor {
 }
 
 mod internal {
-    use super::{Color, BgColor};
+    use super::{BgColor, Color};
     use std::cell::RefCell;
 
     static DEFAULT_FG: i32 = 39;
@@ -127,7 +133,7 @@ mod internal {
     pub struct GlobalColor {
         fg: i32,
         bg: i32,
-        enabled: bool
+        enabled: bool,
     }
 
     impl Drop for GlobalColor {
@@ -137,29 +143,37 @@ mod internal {
     }
 
     fn get_glob() -> (i32, i32, bool) {
-        GLOB_COLOR.with (|cell| {let g = cell.borrow(); (g.fg, g.bg, g.enabled)})
+        GLOB_COLOR.with(|cell| {
+            let g = cell.borrow();
+            (g.fg, g.bg, g.enabled)
+        })
     }
 
     pub fn global_color(fg_color: Option<Color>, bg_color: Option<BgColor>, enabled: Option<bool>) {
-        GLOB_COLOR.with (|cell| {
+        GLOB_COLOR.with(|cell| {
             let mut g = cell.borrow_mut();
             match fg_color {
                 Some(c) => g.fg = c.to_int(),
-                None    => g.fg = g.fg
+                None => g.fg = g.fg,
             }
             match bg_color {
                 Some(c) => g.bg = c.to_int(),
-                None    => g.bg = g.bg
+                None => g.bg = g.bg,
             }
             match enabled {
                 Some(c) => g.enabled = c,
-                None    => g.enabled = g.enabled
+                None => g.enabled = g.enabled,
             }
         })
     }
 
     pub fn pack<T: TermAttrib>(attrib: T, mut text: String) -> String {
-        if { let (_, _, en) = get_glob(); en } { return text; }
+        if {
+            let (_, _, en) = get_glob();
+            en
+        } {
+            return text;
+        }
         if text.as_str().starts_with("\x1b[") {
             unsafe {
                 text.as_mut_vec().remove(0);
@@ -190,10 +204,14 @@ pub fn global_bg(color: Color) {
     internal::global_color(None, Some(BgColor::from_fg(color)), None)
 }
 // Set color to be enabled / disabled
-pub fn color_enabled(enabled: bool) { internal::global_color(None, None, Some(enabled)) }
+pub fn color_enabled(enabled: bool) {
+    internal::global_color(None, None, Some(enabled))
+}
 
 /// Reset the background and foreground color to the defaults colors
-pub fn reset() { internal::global_color(Some(Default), Some(Defaultb), None) }
+pub fn reset() {
+    internal::global_color(Some(Default), Some(Defaultb), None)
+}
 
 /// Methods extension to colorize the text contained in a string
 /// using a simple mathod call
@@ -288,100 +306,268 @@ pub trait AnsiColor {
 
 impl AnsiColor for String {
     // Foreground
-    fn black(self) -> String { internal::pack(Black, self) }
-    fn red(self) -> String { internal::pack(Red, self) }
-    fn green(self) -> String { internal::pack(Green, self) }
-    fn yellow(self) -> String { internal::pack(Yellow, self) }
-    fn blue(self) -> String { internal::pack(Blue, self) }
-    fn magenta(self) -> String { internal::pack(Magenta, self) }
-    fn cyan(self) -> String { internal::pack(Cyan, self) }
-    fn grey(self) -> String { internal::pack(Grey, self) }
-    fn b_black(self) -> String { internal::pack(BrightBlack, self) }
-    fn b_red(self) -> String { internal::pack(BrightRed, self) }
-    fn b_green(self) -> String { internal::pack(BrightGreen, self) }
-    fn b_yellow(self) -> String { internal::pack(BrightYellow, self) }
-    fn b_blue(self) -> String { internal::pack(BrightBlue, self) }
-    fn b_magenta(self) -> String { internal::pack(BrightMagenta, self) }
-    fn b_cyan(self) -> String { internal::pack(BrightCyan, self) }
-    fn b_grey(self) -> String { internal::pack(BrightGrey, self) }
-    fn default(self) -> String { internal::pack(Default, self) }
+    fn black(self) -> String {
+        internal::pack(Black, self)
+    }
+    fn red(self) -> String {
+        internal::pack(Red, self)
+    }
+    fn green(self) -> String {
+        internal::pack(Green, self)
+    }
+    fn yellow(self) -> String {
+        internal::pack(Yellow, self)
+    }
+    fn blue(self) -> String {
+        internal::pack(Blue, self)
+    }
+    fn magenta(self) -> String {
+        internal::pack(Magenta, self)
+    }
+    fn cyan(self) -> String {
+        internal::pack(Cyan, self)
+    }
+    fn grey(self) -> String {
+        internal::pack(Grey, self)
+    }
+    fn b_black(self) -> String {
+        internal::pack(BrightBlack, self)
+    }
+    fn b_red(self) -> String {
+        internal::pack(BrightRed, self)
+    }
+    fn b_green(self) -> String {
+        internal::pack(BrightGreen, self)
+    }
+    fn b_yellow(self) -> String {
+        internal::pack(BrightYellow, self)
+    }
+    fn b_blue(self) -> String {
+        internal::pack(BrightBlue, self)
+    }
+    fn b_magenta(self) -> String {
+        internal::pack(BrightMagenta, self)
+    }
+    fn b_cyan(self) -> String {
+        internal::pack(BrightCyan, self)
+    }
+    fn b_grey(self) -> String {
+        internal::pack(BrightGrey, self)
+    }
+    fn default(self) -> String {
+        internal::pack(Default, self)
+    }
 
     // Background
-    fn blackb(self) -> String { internal::pack(Blackb, self) }
-    fn redb(self) -> String { internal::pack(Redb, self) }
-    fn greenb(self) -> String { internal::pack(Greenb, self) }
-    fn yellowb(self) -> String { internal::pack(Yellowb, self) }
-    fn blueb(self) -> String { internal::pack(Blueb, self) }
-    fn magentab(self) -> String { internal::pack(Magentab, self) }
-    fn cyanb(self) -> String { internal::pack(Cyanb, self) }
-    fn greyb(self) -> String { internal::pack(Greyb, self) }
-    fn b_blackb(self) -> String { internal::pack(BrightBlackb, self) }
-    fn b_redb(self) -> String { internal::pack(BrightRedb, self) }
-    fn b_greenb(self) -> String { internal::pack(BrightGreenb, self) }
-    fn b_yellowb(self) -> String { internal::pack(BrightYellowb, self) }
-    fn b_blueb(self) -> String { internal::pack(BrightBlueb, self) }
-    fn b_magentab(self) -> String { internal::pack(BrightMagentab, self) }
-    fn b_cyanb(self) -> String { internal::pack(BrightCyanb, self) }
-    fn b_greyb(self) -> String { internal::pack(BrightGreyb, self) }
-    fn defaultb(self) -> String { internal::pack(Defaultb, self) }
+    fn blackb(self) -> String {
+        internal::pack(Blackb, self)
+    }
+    fn redb(self) -> String {
+        internal::pack(Redb, self)
+    }
+    fn greenb(self) -> String {
+        internal::pack(Greenb, self)
+    }
+    fn yellowb(self) -> String {
+        internal::pack(Yellowb, self)
+    }
+    fn blueb(self) -> String {
+        internal::pack(Blueb, self)
+    }
+    fn magentab(self) -> String {
+        internal::pack(Magentab, self)
+    }
+    fn cyanb(self) -> String {
+        internal::pack(Cyanb, self)
+    }
+    fn greyb(self) -> String {
+        internal::pack(Greyb, self)
+    }
+    fn b_blackb(self) -> String {
+        internal::pack(BrightBlackb, self)
+    }
+    fn b_redb(self) -> String {
+        internal::pack(BrightRedb, self)
+    }
+    fn b_greenb(self) -> String {
+        internal::pack(BrightGreenb, self)
+    }
+    fn b_yellowb(self) -> String {
+        internal::pack(BrightYellowb, self)
+    }
+    fn b_blueb(self) -> String {
+        internal::pack(BrightBlueb, self)
+    }
+    fn b_magentab(self) -> String {
+        internal::pack(BrightMagentab, self)
+    }
+    fn b_cyanb(self) -> String {
+        internal::pack(BrightCyanb, self)
+    }
+    fn b_greyb(self) -> String {
+        internal::pack(BrightGreyb, self)
+    }
+    fn defaultb(self) -> String {
+        internal::pack(Defaultb, self)
+    }
 
     // styles
-    fn underlined(self) -> String { internal::pack(Underscore, self) }
-    fn bold(self) -> String { internal::pack(Bold, self) }
-    fn blink(self) -> String { internal::pack(Blink, self) }
-    fn reverse(self) -> String { internal::pack(Reverse, self) }
-    fn concealed(self) -> String { internal::pack(Concealed, self) }
-    fn faint(self) -> String { internal::pack(Faint, self) }
-    fn italic(self) -> String { internal::pack(Italic, self) }
-    fn crossedout(self) -> String { internal::pack(CrossedOut, self) }
+    fn underlined(self) -> String {
+        internal::pack(Underscore, self)
+    }
+    fn bold(self) -> String {
+        internal::pack(Bold, self)
+    }
+    fn blink(self) -> String {
+        internal::pack(Blink, self)
+    }
+    fn reverse(self) -> String {
+        internal::pack(Reverse, self)
+    }
+    fn concealed(self) -> String {
+        internal::pack(Concealed, self)
+    }
+    fn faint(self) -> String {
+        internal::pack(Faint, self)
+    }
+    fn italic(self) -> String {
+        internal::pack(Italic, self)
+    }
+    fn crossedout(self) -> String {
+        internal::pack(CrossedOut, self)
+    }
 }
 
 impl AnsiColor for &'static str {
     // Foreground
-    fn black(self) -> String { String::from(self).black() }
-    fn red(self) -> String { String::from(self).red() }
-    fn green(self) -> String { String::from(self).green() }
-    fn yellow(self) -> String { String::from(self).yellow() }
-    fn blue(self) -> String { String::from(self).blue() }
-    fn magenta(self) -> String { String::from(self).magenta() }
-    fn cyan(self) -> String { String::from(self).cyan() }
-    fn grey(self) -> String { String::from(self).grey() }
-    fn b_black(self) -> String { String::from(self).b_black() }
-    fn b_red(self) -> String { String::from(self).b_red() }
-    fn b_green(self) -> String { String::from(self).b_green() }
-    fn b_yellow(self) -> String { String::from(self).b_yellow() }
-    fn b_blue(self) -> String { String::from(self).b_blue() }
-    fn b_magenta(self) -> String { String::from(self).b_magenta() }
-    fn b_cyan(self) -> String { String::from(self).b_cyan() }
-    fn b_grey(self) -> String { String::from(self).b_grey() }
-    fn default(self) -> String { String::from(self).default() }
+    fn black(self) -> String {
+        String::from(self).black()
+    }
+    fn red(self) -> String {
+        String::from(self).red()
+    }
+    fn green(self) -> String {
+        String::from(self).green()
+    }
+    fn yellow(self) -> String {
+        String::from(self).yellow()
+    }
+    fn blue(self) -> String {
+        String::from(self).blue()
+    }
+    fn magenta(self) -> String {
+        String::from(self).magenta()
+    }
+    fn cyan(self) -> String {
+        String::from(self).cyan()
+    }
+    fn grey(self) -> String {
+        String::from(self).grey()
+    }
+    fn b_black(self) -> String {
+        String::from(self).b_black()
+    }
+    fn b_red(self) -> String {
+        String::from(self).b_red()
+    }
+    fn b_green(self) -> String {
+        String::from(self).b_green()
+    }
+    fn b_yellow(self) -> String {
+        String::from(self).b_yellow()
+    }
+    fn b_blue(self) -> String {
+        String::from(self).b_blue()
+    }
+    fn b_magenta(self) -> String {
+        String::from(self).b_magenta()
+    }
+    fn b_cyan(self) -> String {
+        String::from(self).b_cyan()
+    }
+    fn b_grey(self) -> String {
+        String::from(self).b_grey()
+    }
+    fn default(self) -> String {
+        String::from(self).default()
+    }
 
     // Background
-    fn blackb(self) -> String { String::from(self).blackb() }
-    fn redb(self) -> String { String::from(self).redb() }
-    fn greenb(self) -> String { String::from(self).greenb() }
-    fn yellowb(self) -> String { String::from(self).yellowb() }
-    fn blueb(self) -> String { String::from(self).blueb() }
-    fn magentab(self) -> String { String::from(self).magentab() }
-    fn cyanb(self) -> String { String::from(self).cyanb() }
-    fn greyb(self) -> String { String::from(self).greyb() }
-    fn b_blackb(self) -> String { String::from(self).b_blackb() }
-    fn b_redb(self) -> String { String::from(self).b_redb() }
-    fn b_greenb(self) -> String { String::from(self).b_greenb() }
-    fn b_yellowb(self) -> String { String::from(self).b_yellowb() }
-    fn b_blueb(self) -> String { String::from(self).b_blueb() }
-    fn b_magentab(self) -> String { String::from(self).b_magentab() }
-    fn b_cyanb(self) -> String { String::from(self).b_cyanb() }
-    fn b_greyb(self) -> String { String::from(self).b_greyb() }
-    fn defaultb(self) -> String { String::from(self).defaultb() }
+    fn blackb(self) -> String {
+        String::from(self).blackb()
+    }
+    fn redb(self) -> String {
+        String::from(self).redb()
+    }
+    fn greenb(self) -> String {
+        String::from(self).greenb()
+    }
+    fn yellowb(self) -> String {
+        String::from(self).yellowb()
+    }
+    fn blueb(self) -> String {
+        String::from(self).blueb()
+    }
+    fn magentab(self) -> String {
+        String::from(self).magentab()
+    }
+    fn cyanb(self) -> String {
+        String::from(self).cyanb()
+    }
+    fn greyb(self) -> String {
+        String::from(self).greyb()
+    }
+    fn b_blackb(self) -> String {
+        String::from(self).b_blackb()
+    }
+    fn b_redb(self) -> String {
+        String::from(self).b_redb()
+    }
+    fn b_greenb(self) -> String {
+        String::from(self).b_greenb()
+    }
+    fn b_yellowb(self) -> String {
+        String::from(self).b_yellowb()
+    }
+    fn b_blueb(self) -> String {
+        String::from(self).b_blueb()
+    }
+    fn b_magentab(self) -> String {
+        String::from(self).b_magentab()
+    }
+    fn b_cyanb(self) -> String {
+        String::from(self).b_cyanb()
+    }
+    fn b_greyb(self) -> String {
+        String::from(self).b_greyb()
+    }
+    fn defaultb(self) -> String {
+        String::from(self).defaultb()
+    }
 
     // styles
-    fn underlined(self) -> String { String::from(self).underlined() }
-    fn bold(self) -> String { String::from(self).bold() }
-    fn blink(self) -> String { String::from(self).blink() }
-    fn reverse(self) -> String { String::from(self).reverse() }
-    fn concealed(self) -> String { String::from(self).concealed() }
-    fn faint(self) -> String { String::from(self).faint() }
-    fn italic(self) -> String { String::from(self).italic() }
-    fn crossedout(self) -> String { String::from(self).crossedout() }
+    fn underlined(self) -> String {
+        String::from(self).underlined()
+    }
+    fn bold(self) -> String {
+        String::from(self).bold()
+    }
+    fn blink(self) -> String {
+        String::from(self).blink()
+    }
+    fn reverse(self) -> String {
+        String::from(self).reverse()
+    }
+    fn concealed(self) -> String {
+        String::from(self).concealed()
+    }
+    fn faint(self) -> String {
+        String::from(self).faint()
+    }
+    fn italic(self) -> String {
+        String::from(self).italic()
+    }
+    fn crossedout(self) -> String {
+        String::from(self).crossedout()
+    }
 }
