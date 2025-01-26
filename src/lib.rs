@@ -160,7 +160,7 @@ mod internal {
     pub fn pack<T: TermAttrib>(attrib: T, mut text: String) -> String {
         if {
             let (_, _, en) = get_glob();
-            en
+            !en
         } {
             return text;
         }
@@ -193,7 +193,7 @@ pub fn global_fg(color: Color) {
 pub fn global_bg(color: Color) {
     internal::global_color(None, Some(BgColor::from_fg(color)), None)
 }
-// Set color to be enabled / disabled
+/// Set color to be enabled / disabled
 pub fn color_enabled(enabled: bool) {
     internal::global_color(None, None, Some(enabled))
 }

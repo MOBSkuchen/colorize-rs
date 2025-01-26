@@ -1,6 +1,6 @@
 [package]
 name = "colorize-rs"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["MOBSkuchen"]
 description = "Simple terminal text colorisation using ansi characters"
 license = "MIT"
