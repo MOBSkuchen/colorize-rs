@@ -1,16 +1,14 @@
 [package]
-name = "colorize"
+name = "colorize-rs"
 version = "0.1.0"
-authors = ["letang.jeremy@gmail.com"]
+authors = ["MOBSkuchen"]
 description = "Simple terminal text colorisation using ansi characters"
 license = "MIT"
-readme = "./README.md"
-homepage = "https://github.com/jeremyletang/colorize"
-repository = "https://github.com/jeremyletang/colorize"
+readme = "README.md"
+homepage = "https://github.com/MOBSkuchen/colorize"
+repository = "https://github.com/MOBSkuchen/colorize"
+edition = "2021"
 
 [lib]
 name = "colorize"
 crate-type = ["rlib", "dylib"]
-
-[[bin]]
-name = "colorize_tests"
