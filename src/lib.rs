@@ -158,12 +158,8 @@ mod internal {
         })
     }
 
-    pub fn set_enabled(enabled: bool) {
-
-    }
-
     pub fn pack<T: TermAttrib>(attrib: T, mut text: String) -> String {
-        if { let (fg, bg, en) = get_glob(); en } { return text; }
+        if { let (_, _, en) = get_glob(); en } { return text; }
         if text.as_str().starts_with("\x1b[") {
             unsafe {
                 text.as_mut_vec().remove(0);
@@ -177,7 +173,7 @@ mod internal {
             let tmp = text;
             text = format!("\x1b[{}m", attrib.to_int());
             text.push_str(tmp.as_str());
-            let (fg, bg, en) = get_glob();
+            let (fg, bg, _) = get_glob();
             text.push_str(format!("\x1b[0;{};{}m", fg, bg).as_str());
         }
         text
@@ -197,9 +193,7 @@ pub fn global_bg(color: Color) {
 pub fn color_enabled(enabled: bool) { internal::global_color(None, None, Some(enabled)) }
 
 /// Reset the background and foreground color to the defaults colors
-pub fn reset() {
-    internal::global_color(Some(Default), Some(Defaultb))
-}
+pub fn reset() { internal::global_color(Some(Default), Some(Defaultb), None) }
 
 /// Methods extension to colorize the text contained in a string
 /// using a simple mathod call
@@ -278,7 +272,7 @@ pub trait AnsiColor {
     fn underlined(self) -> String;
     /// Bold text
     fn bold(self) -> String;
-    /// Blink test ( Wonderful )
+    /// Blink tests ( Wonderful )
     fn blink(self) -> String;
     /// Reverse mod ON
     fn reverse(self) -> String;
@@ -352,7 +346,6 @@ impl AnsiColor for &'static str {
     fn magenta(self) -> String { String::from(self).magenta() }
     fn cyan(self) -> String { String::from(self).cyan() }
     fn grey(self) -> String { String::from(self).grey() }
-    fn default(self) -> String { String::from(self).default() }
     fn b_black(self) -> String { String::from(self).b_black() }
     fn b_red(self) -> String { String::from(self).b_red() }
     fn b_green(self) -> String { String::from(self).b_green() }
@@ -361,6 +354,7 @@ impl AnsiColor for &'static str {
     fn b_magenta(self) -> String { String::from(self).b_magenta() }
     fn b_cyan(self) -> String { String::from(self).b_cyan() }
     fn b_grey(self) -> String { String::from(self).b_grey() }
+    fn default(self) -> String { String::from(self).default() }
 
     // Background
     fn blackb(self) -> String { String::from(self).blackb() }
@@ -371,7 +365,6 @@ impl AnsiColor for &'static str {
     fn magentab(self) -> String { String::from(self).magentab() }
     fn cyanb(self) -> String { String::from(self).cyanb() }
     fn greyb(self) -> String { String::from(self).greyb() }
-    fn defaultb(self) -> String { String::from(self).defaultb() }
     fn b_blackb(self) -> String { String::from(self).b_blackb() }
     fn b_redb(self) -> String { String::from(self).b_redb() }
     fn b_greenb(self) -> String { String::from(self).b_greenb() }
@@ -380,6 +373,7 @@ impl AnsiColor for &'static str {
     fn b_magentab(self) -> String { String::from(self).b_magentab() }
     fn b_cyanb(self) -> String { String::from(self).b_cyanb() }
     fn b_greyb(self) -> String { String::from(self).b_greyb() }
+    fn defaultb(self) -> String { String::from(self).defaultb() }
 
     // styles
     fn underlined(self) -> String { String::from(self).underlined() }
