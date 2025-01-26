@@ -8,7 +8,3 @@ readme = "README.md"
 homepage = "https://github.com/MOBSkuchen/colorize"
 repository = "https://github.com/MOBSkuchen/colorize"
 edition = "2021"
-
-[lib]
-name = "colorize"
-crate-type = ["rlib", "dylib"]

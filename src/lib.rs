@@ -1,36 +1,26 @@
-// TODO: Update code examples
-// Terminal color using ansi escape character for Rust.
-//
-// ```Rust
-// extern mod colorize;
-// // Import the trait implemented for &'static str and ~str
-// use colorize::AnsiColor;
-// // Import the colors for the global
-// use colorize::{BrightRed, Blue};
-//
-// pub fn main() {
-//     // Set some global colors
-//     colorize::global_fg(BrightRed);
-//     colorize::global_bg(Blue);
-//     // ^~~~ These settings are reset to default at the end.
-//
-//     // You can use specific colors or style on a given str,
-//     // the globals colors are restored after !
-//
-//     // Write a green underlined text on a yellow background !
-//     println!("{}", "Hello World !".green().underline().yellowb());
-//
-//     // Use bright or normal colors
-//     println!("{}", "Bright Green foreground and Magenta background !"
-//                    .b_green()
-//                    .magentab());
-// }
-//
-// ```
+/*
+Terminal color using ansi escape character for Rust.
+```Rust
+extern crate colorize_rs;
+use colorize_rs::{AnsiColor, Color};
 
-#![crate_name = "colorize"]
-#![crate_type = "dylib"]
-#![crate_type = "rlib"]
+pub fn main() {
+    // Set some global colors
+    colorize_rs::global_fg(Color::Blue);
+    colorize_rs::global_bg(Color::Red);
+    // ^~~~ These settings are reset to default at the end.
+
+    // You can use specific colors or style on a given str,
+    // the globals colors are restored after !
+
+    // Write a green underlined text on a yellow background !
+    println!("{}", "Hello World !".green().underlined().yellowb());
+
+    // Use bright or normal colors
+    println!("{}", "Bright Green foreground and Magenta background !".b_green().magentab());
+}
+```
+*/
 
 use BgColor::*;
 use Color::*;

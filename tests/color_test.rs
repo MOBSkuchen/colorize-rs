@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use colorize::AnsiColor;
+    use colorize_rs::AnsiColor;
 
     #[test]
     fn all() {

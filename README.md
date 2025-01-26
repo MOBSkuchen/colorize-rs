@@ -1,27 +1,19 @@
-colorize
+colorize-rs
 ========
+A fork of colorize https://github.com/jeremyletang/colorize
 
-__libcolorize__ provide simple text colorization for terminal emulator, using ansi escape characters.
+__colorize-rs__ provide simple text colorization for terminal emulator, using ansi escape characters.
 
-To build __libcolorize__ just do :
-
-```Shell
-> rustc lib.rs
-```
-
-__libcolorize__ is really simple to use, see this short example !
+__colorize-rs__ is really simple to use, see this short example !
 
 ```Rust
-extern crate colorize;
-// Import the trait implemented for &'static str and ~str
-use colorize::AnsiColor;
-// Import the colors for the global
-use colorize::{BrightRed, Blue};
+extern crate colorize_rs;
+use colorize_rs::{AnsiColor, Color};
 
 pub fn main() {
     // Set some global colors
-    colorize::global_fg(BrightRed);
-    colorize::global_bg(Blue);
+    colorize_rs::global_fg(Color::Blue);
+    colorize_rs::global_bg(Color::Red);
     // ^~~~ These settings are reset to default at the end.
 
     // You can use specific colors or style on a given str,
@@ -33,5 +25,4 @@ pub fn main() {
     // Use bright or normal colors
     println!("{}", "Bright Green foreground and Magenta background !".b_green().magentab());
 }
-
 ```
