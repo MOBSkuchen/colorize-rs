@@ -1,24 +1,4 @@
-// The MIT License (MIT)
-//
-// Copyright (c) 2014 Jeremy Letang
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of
-// this software and associated documentation files (the "Software"), to deal in
-// the Software without restriction, including without limitation the rights to
-// use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-// the Software, and to permit persons to whom the Software is furnished to do so,
-// subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+// TODO: Update code examples
 // Terminal color using ansi escape character for Rust.
 //
 // ```Rust
@@ -137,7 +117,7 @@ mod internal {
 
     static DEFAULT_FG: i32 = 39;
     static DEFAULT_BG: i32 = 49;
-    thread_local!(static GLOB_COLOR: RefCell<GlobalColor> = RefCell::new(GlobalColor {fg: DEFAULT_FG, bg: DEFAULT_BG}));
+    thread_local!(static GLOB_COLOR: RefCell<GlobalColor> = RefCell::new(GlobalColor {fg: DEFAULT_FG, bg: DEFAULT_BG, enabled: true}));
 
     pub trait TermAttrib {
         fn to_int(&self) -> i32;
@@ -146,7 +126,8 @@ mod internal {
     #[derive(Clone)]
     pub struct GlobalColor {
         fg: i32,
-        bg: i32
+        bg: i32,
+        enabled: bool
     }
 
     impl Drop for GlobalColor {
@@ -155,25 +136,34 @@ mod internal {
         }
     }
 
-    fn get_glob() -> (i32, i32) {
-        GLOB_COLOR.with (|cell| {let g = cell.borrow(); (g.fg, g.bg)})
+    fn get_glob() -> (i32, i32, bool) {
+        GLOB_COLOR.with (|cell| {let g = cell.borrow(); (g.fg, g.bg, g.enabled)})
     }
 
-    pub fn global_color(fg_color: Option<Color>, bg_color: Option<BgColor>) {
+    pub fn global_color(fg_color: Option<Color>, bg_color: Option<BgColor>, enabled: Option<bool>) {
         GLOB_COLOR.with (|cell| {
             let mut g = cell.borrow_mut();
             match fg_color {
                 Some(c) => g.fg = c.to_int(),
-                None    => g.fg = DEFAULT_FG
+                None    => g.fg = g.fg
             }
             match bg_color {
                 Some(c) => g.bg = c.to_int(),
-                None    => g.bg = DEFAULT_BG
+                None    => g.bg = g.bg
+            }
+            match enabled {
+                Some(c) => g.enabled = c,
+                None    => g.enabled = g.enabled
             }
         })
     }
 
+    pub fn set_enabled(enabled: bool) {
+
+    }
+
     pub fn pack<T: TermAttrib>(attrib: T, mut text: String) -> String {
+        if { let (fg, bg, en) = get_glob(); en } { return text; }
         if text.as_str().starts_with("\x1b[") {
             unsafe {
                 text.as_mut_vec().remove(0);
@@ -187,7 +177,7 @@ mod internal {
             let tmp = text;
             text = format!("\x1b[{}m", attrib.to_int());
             text.push_str(tmp.as_str());
-            let (fg, bg) = get_glob();
+            let (fg, bg, en) = get_glob();
             text.push_str(format!("\x1b[0;{};{}m", fg, bg).as_str());
         }
         text
@@ -196,13 +186,15 @@ mod internal {
 
 /// Set a custom global foreground color
 pub fn global_fg(color: Color) {
-    internal::global_color(Some(color), None)
+    internal::global_color(Some(color), None, None)
 }
 
 /// Set a custom global background color
 pub fn global_bg(color: Color) {
-    internal::global_color(None, Some(BgColor::from_fg(color)))
+    internal::global_color(None, Some(BgColor::from_fg(color)), None)
 }
+// Set color to be enabled / disabled
+pub fn color_enabled(enabled: bool) { internal::global_color(None, None, Some(enabled)) }
 
 /// Reset the background and foreground color to the defaults colors
 pub fn reset() {
